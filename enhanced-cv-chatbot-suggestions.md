@@ -559,7 +559,7 @@ Feel free to use the suggested questions below or ask anything else!`,
 import { NextResponse } from 'next/server'
 
 const RESUME_CONTENT = `SUHAS THAKRAL
-📧 suhas.thakral@whu.edu | 📱 +49 15223957027 | 💼 LinkedIn Profile
+📧 suhas.thakral@whu.edu  | 💼 LinkedIn Profile
 Head of Business Intelligence & AI
 
 PROFESSIONAL SUMMARY
