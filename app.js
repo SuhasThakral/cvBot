@@ -2,7 +2,7 @@
 class CVChatbot {
     constructor() {
         this.resumeContent = `SUHAS THAKRAL
-📧 suhas.thakral@whu.edu | 📱 +49 15223957027 | 💼 LinkedIn Profile
+📧 suhas.thakral@whu.edu
 Head of Business Intelligence & AI
 
 PROFESSIONAL SUMMARY
