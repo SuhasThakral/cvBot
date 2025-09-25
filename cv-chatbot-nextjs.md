@@ -584,6 +584,13 @@ You have ${questionCount} questions to start with. After that, you'll need to ve
 ### app/api/chat/route.js
 ```javascript
 import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+
+// create Supabase client with environment variables you added in Vercel
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+)
 
 const RESUME_CONTENT = `SUHAS THAKRAL
 📧 suhas.thakral@whu.edu | 📱 +49 15223957027 | 💼 LinkedIn Profile
@@ -675,7 +682,15 @@ PROJECTS & INTERESTS
 export async function POST(request) {
   try {
     const { message, conversation_history } = await request.json()
+        // 1️⃣  Save the user question to Supabase
+    const { error: insertError } = await supabase
+      .from('questions')
+      .insert({ text: message })      // columns must match your table definition
 
+    if (insertError) {
+      console.error('Supabase insert error:', insertError)
+      // (optional) continue anyway – we don't want to break the chat if logging fails
+    }
     // Construct the prompt
     const systemPrompt = `You are a CV assistant for Suhas Thakral. Your job is to answer questions about his professional background based ONLY on the resume information provided below. 
 
