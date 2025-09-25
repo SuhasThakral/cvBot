@@ -583,7 +583,7 @@ You have ${questionCount} questions to start with. After that, you'll need to ve
 ```javascript
 import { NextResponse } from 'next/server'
 
-const RESUME_CONTENT = ``SUHAS THAKRAL
+const RESUME_CONTENT = `SUHAS THAKRAL
 📧 suhas.thakral@whu.edu | 📱 +49 15223957027 | 💼 LinkedIn Profile
 Head of Business Intelligence & AI
 
