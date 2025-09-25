@@ -558,103 +558,70 @@ Feel free to use the suggested questions below or ask anything else!`,
 ```javascript
 import { NextResponse } from 'next/server'
 
-const RESUME_CONTENT = `SUHAS THAKRAL 
-Business Intelligence & Data Analytics Leader 
-📧 suhas.thakral@whu.edu | 📱 +49 15223957027 
-🔗 LinkedIn: linkedin.com/in/suhas-thakral-6974a479 | 📍 Germany 
+const RESUME_CONTENT = `SUHAS THAKRAL
+📧 suhas.thakral@whu.edu | 📱 +49 15223957027 | 💼 LinkedIn Profile
+Head of Business Intelligence & AI
 
-PROFESSIONAL SUMMARY 
-Experienced data leader with a proven track record of generating business impact through 
-insights and algorithms. Strong team management skills and ability to collaborate across  
-departments. Proficient in AI concepts and applications, including prompt engineering. 
+PROFESSIONAL SUMMARY
+Experienced data leader with a track record of generating business impact through insights and algorithms. Strong team management skills and ability to collaborate across departments. Proficient in AI concepts and applications including prompt engineering, with expertise in driving AI adoption and integrating large language models into BI workflows for automated insights and human-centered data interactions.
 
-Core Competencies: 
-• Data Warehousing: BigQuery, AWS 
-• Programming Languages: SQL, Python 
-• Data Visualization: Tableau, Looker Studio, QlikSense, Metabase 
-• CRM Platforms: Salesforce, HubSpot, Pipedrive 
-• ETL Tools: Fivetran, Stitch Data, Cloud Functions, Cloud Scheduler, Scheduled Queries, ZeroETL, DBT, Airflow 
-• AI Knowledge: ChatGPT, OpenAI API, LM Studio, MCP, RAG, Vibe Coding, Prompt Engineering, n8n Agents 
+CORE COMPETENCIES
+AI & Advanced Analytics: AI concepts, Prompt engineering, Large Language Models, "Vibe coding" techniques, Automated insights
+Data Technologies: BigQuery, AWS, SQL, Python, Data warehousing, ETL (Fivetran, Stitch Data, DBT, Airflow)
+Visualization & BI: Tableau, Looker Studio, QlikSense, Metabase, Dashboard design, Reporting frameworks
+CRM & Platforms: Salesforce, Hubspot, Pipedrive, Cloud Functions, Cloud Scheduler, ZeroETL
 
-KEY ACHIEVEMENTS 
-• Revenue Growth: Increased revenue by 15% and 21% for two different companies through advanced analytics 
-• Cost Optimization: Reduced BI infrastructure costs by 35% while improving performance 
-• Team Leadership: Managed cross-functional teams of 8+ members across multiple departments 
-• Process Automation: Automated 80% of reporting processes, reducing manual effort by 25 hours/week 
-• Data Quality: Improved data accuracy from 75% to 95% through comprehensive data governance initiatives 
+PROFESSIONAL EXPERIENCE
 
-PROFESSIONAL EXPERIENCE 
+Head of Business Intelligence | HYGH AG | Apr 2022 - Present (2 years 5 months)
+Key Business Impact Achievements:
+• Revenue Impact: Built attribution model to attribute revenue to each screen, providing cleaner investor reporting
+• Cost Optimization: Analyzed late closers and early shutting shops, built proportional system for fair rent, reducing OPEX by 10%
+• Revenue Growth: Negotiated higher CMP with measuring authorities, directly increasing revenue potential by 11%
+• AI Innovation: Built AI automation for TEXT to SQL on N*N for simple Salesforce data
+• Sales Efficiency: Assisted in quoting tool development with automated offer building, saving sales team ~30 minutes per offer
+• Strategic Planning and Business Partnership - Collaborating with senior leadership to define and align the BI department strategy with company goals
+• Driving AI adoption and prompt engineering: integrating AI into BI workflows—leveraging large language models for automated insights
+• Salesforce Admin and product owner - Custom building apps on Salesforce to bring all systems under one ecosystem
+• Reporting and Visualization - Designing and implementing reporting frameworks and dashboards for clients, stakeholders, and investors
+• Analysis of revenue data and modeling for forecasting and setting targets
+• Design, implementation, and rollout of incentive models
+• Managing the master reporting project to make data accessible to all stakeholders
+• Training of new hires and mentoring the team to improve data skills on TABLEAU and SQL
 
-Senior Data Analyst | Freelance | April 2024 – Present 
-• Developed comprehensive BI solutions for multiple clients, resulting in 20% average improvement in decision-making speed 
-• Created automated reporting systems that reduced manual reporting time by 30 hours/week 
-• Implemented data quality frameworks that improved accuracy from 80% to 96% 
-• Designed and executed A/B testing strategies that increased conversion rates by 15% 
+Business Intelligence Team Lead | Atheneum | Jan 2020 - Apr 2022 (2 years 10 months)
+Key Business Impact Achievements:
+• Revenue Growth: Built compensation model based on net revenue, increasing gross revenue by 50%
+• Team Building: Expanded data team from 1 person to 8 across Berlin, London, and Lahore
+• Strategic Alignment: Worked with upper management to align financial goals with BI for direct measurable impact
+• Data Control and Management - Coordinating with engineering and product team to enforce data governance, accuracy, and consistency
 
-Business Intelligence Manager | OnTruck | September 2022 – March 2024 
-• Led a team of 4 analysts in developing data-driven solutions for logistics optimization 
-• Built end-to-end BI infrastructure using BigQuery, Looker Studio, and Fivetran 
-• Implemented predictive models that reduced delivery costs by 12% 
-• Created executive dashboards that provided real-time visibility into KPIs 
-• Established data governance policies that improved data consistency across departments 
+Business Intelligence Controller | Atheneum | Jun 2019 - Jan 2020
 
-Senior Business Analyst | Westwing Group | January 2021 – August 2022 
-• Spearheaded analytics initiatives that contributed to 21% revenue increase 
-• Developed customer segmentation models that improved marketing ROI by 28% 
-• Built automated reporting pipelines using DBT and Airflow 
-• Created attribution models for multi-channel marketing campaigns 
-• Collaborated with product teams to optimize user experience through data insights 
+CRM Manager | SMUNCH | Nov 2018 - Jun 2019 (8 months)
+• Data migration and cleaning between CRM systems
+• Implementation of sales process and lead research process
+• Optimizing sales process using MarketingCloud automation
+• Creating reports on Tableau and Salesforce to track new KPIs
 
-Business Intelligence Analyst | Home24 SE | June 2019 – December 2020 
-• Designed and maintained BI infrastructure supporting €500M+ annual revenue 
-• Created performance dashboards that enabled data-driven decision making across all departments 
-• Implemented ETL processes that reduced data processing time by 40% 
-• Developed forecasting models that improved inventory planning accuracy by 25% 
+Business Intelligence Analyst | Medigo GmbH | Nov 2017 - Nov 2018 (1 year 1 month)
+• Automation of controlling tasks using TABLEAU and Zapier
+• Creation of dashboards on TABLEAU to visualize data in the most understandable ways
+• Analysis of data to find trends of seasonality and calculation of team compensation
+• Data extraction and transformation using SQL and various ad-hoc analysis
+• CRM Owner and trainer, improving sales processes through data analysis
+• Analyzing conversion rates and implementing new technologies for optimization
+• Creation of various dashboards using QlikSense for operational and financial KPIs
 
-Data Analyst | Rocket Internet SE | March 2018 – May 2019 
-• Analyzed user behavior across multiple portfolio companies 
-• Built cohort analysis frameworks that identified customer retention opportunities 
-• Created automated reporting systems for portfolio performance tracking 
-• Developed KPI frameworks for startup evaluation and monitoring 
+Consultant | Aon | Jun 2014 - Feb 2015 (9 months)
+• Worked as junior analyst in consulting operations with team of 20 analysts and project leads
+• Managed team engagement projects in South East Asian and European markets
+• Analyzed statistical data and worked on ROI presentations for clients including McDonald's
 
-EDUCATION 
-Master of Science in Management | WHU – Otto Beisheim School of Management | 2016 – 2018 
-• Focus: Strategy, Analytics, and Digital Transformation 
-• Thesis: "Predictive Analytics in E-commerce: Customer Lifetime Value Optimization" 
-
-Bachelor of Engineering in Computer Science | Delhi College of Engineering | 2010 – 2014 
-• Focus: Data Structures, Algorithms, and Database Management 
-• Final Project: "Machine Learning Algorithms for Pattern Recognition" 
-
-CERTIFICATIONS & TRAINING 
-• Google Cloud Professional Data Engineer (2023) 
-• Tableau Desktop Certified Professional (2022) 
-• AWS Certified Solutions Architect (2021) 
-• Salesforce Advanced Administrator (2020) 
-• Advanced SQL and Python for Data Analysis (Coursera, 2019) 
-
-TECHNICAL SKILLS 
-Programming: SQL (Expert), Python (Advanced), R (Intermediate), JavaScript (Basic) 
-Databases: BigQuery, PostgreSQL, MySQL, Snowflake, Redshift 
-BI Tools: Tableau, Looker Studio, QlikSense, Metabase, Power BI 
-Cloud Platforms: Google Cloud Platform, AWS, Azure 
-ETL/ELT: Fivetran, Stitch, DBT, Airflow, Cloud Functions 
-CRM: Salesforce, HubSpot, Pipedrive 
-AI/ML: OpenAI API, LM Studio, RAG, Prompt Engineering, n8n 
-Project Management: Jira, Asana, Monday.com 
-
-LANGUAGES 
-• English (Fluent) 
-• German (Conversational) 
-• Hindi (Native) 
-
-PROJECTS & INTERESTS 
-• Built AI-powered CV chatbot using RAG and local LLMs 
-• Developed browser extension for automated e-commerce size filtering 
-• Created AI agents for business data analysis using QWEN 3 and LM Studio 
-• Regular contributor to data science communities and open-source projects 
-• Interests: Running (6 min/km pace), Coffee brewing, AI/ML experimentation`
-
+EDUCATION
+Master in Management | WHU – Otto Beisheim School of Management | 2015 - 2017
+Master's degree, Business, Management, Marketing | University of South Carolina Darla Moore School of Business | 2016
+Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2014`
 export async function POST(request) {
   try {
     const { lastMessage, conversationHistory } = await request.json()
