@@ -573,7 +573,7 @@ CRM & Platforms: Salesforce, Hubspot, Pipedrive, Cloud Functions, Cloud Schedule
 
 PROFESSIONAL EXPERIENCE
 
-Head of Business Intelligence | HYGH AG | Apr 2022 - Present (2 years 5 months)
+Head of Business Intelligence | HYGH AG | Apr 2022 - CURRENT DATE . CURRENT ROLE IS Head of Business Intelligence AT| HYGH A
 Key Business Impact Achievements:
 • Revenue Impact: Built attribution model to attribute revenue to each screen, providing cleaner investor reporting
 • Cost Optimization: Analyzed late closers and early shutting shops, built proportional system for fair rent, reducing OPEX by 10%
