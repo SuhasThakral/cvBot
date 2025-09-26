@@ -19,6 +19,9 @@
                     <div class="usage-indicator">
                         <span id="questionCount">5</span> questions remaining
                     </div>
+                    <div class="token-indicator">
+                        <span id="tokenCount">0</span> tokens used
+                    </div>
                     <button id="themeToggle" class="btn btn--secondary theme-toggle" aria-label="Toggle theme">
                         <span class="theme-icon">🌙</span>
                     </button>
@@ -29,15 +32,12 @@
         <!-- Main Chat Interface -->
         <main class="chat-container">
             <div class="chat-messages" id="chatMessages">
-                <div class="message assistant-message">
-                    <div class="message-avatar">
-                        <span>AI</span>
-                    </div>
+                <div class="message assistant-message welcome-message">
                     <div class="message-content">
-                        <p>Hello! I'm here to help you learn about Suhas Thakral's professional background. You can ask me about his experience, skills, education, or any other details from his CV. I'll be frank about what information I can or cannot find.</p>
-                        <div class="message-timestamp">
-                            Just now
+                        <div class="message-text">
+                            Hello! I'm here to help you learn about Suhas Thakral's professional background. You can ask me about his experience, skills, education, or any other details from his CV. I'll be frank about what information I can or cannot find.
                         </div>
+                        <div class="message-time">Now</div>
                     </div>
                 </div>
             </div>
@@ -117,6 +117,12 @@
                 <span id="currentCost" class="cost-value">$0.00</span>
                 <span class="cost-limit">/ $5.00</span>
             </div>
+            <div class="session-stats">
+                <span class="stats-label">Session:</span>
+                <span id="sessionTokens" class="stats-value">0 tokens</span>
+                <span class="stats-separator">•</span>
+                <span id="sessionCost" class="stats-value">$0.00</span>
+            </div>
         </div>
 
         <!-- Loading Indicator -->
@@ -128,6 +134,39 @@
             </div>
         </div>
     </div>
+
+    <!-- Required CDN Scripts for Static Deployment -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Lightweight token counting solution -->
+    <script>
+        // Simple token estimator for client-side use (more accurate than word count)
+        window.estimateTokens = function(text) {
+            // Rough estimation: 1 token ≈ 0.75 words for English text
+            // This is less accurate than tiktoken but works for client-side estimation
+            const words = text.trim().split(/\s+/).length;
+            return Math.ceil(words / 0.75);
+        };
+    </script>
+    
+    <!-- Configuration will be loaded from Vercel API route -->
+    <script>
+        // Load configuration from Vercel serverless function
+        window.loadConfig = async function() {
+            try {
+                const response = await fetch('/api/config');
+                const config = await response.json();
+                return config;
+            } catch (error) {
+                console.warn('Config not available, using fallback mode');
+                return {
+                    supabaseUrl: null,
+                    supabaseAnonKey: null,
+                    perplexityApiKey: null
+                };
+            }
+        };
+    </script>
 
     <script src="app.js"></script>
 </body>
