@@ -16,7 +16,7 @@ CRM & Platforms: Salesforce, Hubspot, Pipedrive, Cloud Functions, Cloud Schedule
 
 PROFESSIONAL EXPERIENCE
 
-Head of Business Intelligence | HYGH AG | Apr 2022 - CURRENT_DATE - Current Role 
+Head of Business Intelligence | HYGH AG | Apr 2022 - Current Role 
 Key Business Impact Achievements:
 • Revenue Impact: Built attribution model to attribute revenue to each screen, providing cleaner investor reporting
 • Cost Optimization: Analyzed late closers and early shutting shops, built proportional system for fair rent, reducing OPEX by 10%
@@ -77,22 +77,33 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
         };
 
         this.costPerQuestion = 0.05;
-        
+
+        // API Configuration
+        this.PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
+        this.SUPABASE_URL = window.SUPABASE_URL || process.env.SUPABASE_URL;
+        this.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+        this.PERPLEXITY_API_KEY = window.PERPLEXITY_API_KEY || process.env.PERPLEXITY_API_KEY;
+
+        // Initialize Supabase client
+        if (this.SUPABASE_URL && this.SUPABASE_ANON_KEY && window.supabase) {
+            this.supabaseClient = window.supabase.createClient(this.SUPABASE_URL, this.SUPABASE_ANON_KEY);
+        }
+
         this.fallbackSuggestions = [
-            "What is Suhas's current role and responsibilities?",
-            "What are his key technical skills and expertise areas?",
-            "Can you tell me about his major career achievements?",
-            "What is his educational background?",
-            "Which companies has he worked for?",
-            "What AI and ML experience does he have?",
-            "What certifications does he hold?",
-            "What are his programming language skills?",
-            "Tell me about his project management experience",
-            "What languages does he speak?"
+            "What is Suhas's current role at HYGH AG?",
+            "What are his key AI and ML competencies?",
+            "Tell me about his team leadership experience at Atheneum",
+            "What business impact has he achieved in his roles?",
+            "What's his educational background from WHU?",
+            "Which BI tools and platforms does he specialize in?",
+            "What AI automation projects has he worked on?",
+            "How did he grow the data team at Atheneum?",
+            "What cost optimization results has he achieved?",
+            "What are his Salesforce and CRM skills?"
         ];
 
         this.currentSuggestions = this.fallbackSuggestions.slice(0, 3);
-        
+
         this.init();
     }
 
@@ -129,13 +140,12 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
             const chatMessages = document.getElementById('chatMessages');
             // Clear existing messages except the welcome message
             chatMessages.innerHTML = `
-                <div class="message assistant-message">
-                    <div class="message-avatar">
-                        <span>AI</span>
-                    </div>
+                <div class="message assistant-message welcome-message">
                     <div class="message-content">
-                        <p>Hello! I'm here to help you learn about Suhas Thakral's professional background. You can ask me about his experience, skills, education, or any other details from his CV. I'll be frank about what information I can or cannot find.</p>
-                        <div class="message-timestamp">Just now</div>
+                        <div class="message-text">
+                            Hello! I'm here to help you learn about Suhas Thakral's professional background. You can ask me about his experience, skills, education, or any other details from his CV. I'll be frank about what information I can or cannot find.
+                        </div>
+                        <div class="message-time">Now</div>
                     </div>
                 </div>
             `;
@@ -146,7 +156,7 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
                     this.addMessageToDOM(msg.content, msg.type, msg.timestamp, false);
                 }
             });
-            
+
             this.scrollToBottom();
         }
     }
@@ -256,6 +266,9 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
             return;
         }
 
+        // Store question in Supabase
+        await this.storeQuestion(message);
+
         // Add user message
         this.addMessageToDOM(message, 'user');
         input.value = '';
@@ -274,17 +287,85 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
         // Show typing indicator
         this.showTypingIndicator();
 
-        // Simulate API delay
-        await this.delay(1000 + Math.random() * 2000);
+        try {
+            // Generate response using Perplexity API
+            const response = await this.generateResponseWithPerplexity(message);
+            this.hideTypingIndicator();
+            await this.addMessageWithTyping(response, 'assistant');
+        } catch (error) {
+            console.error('Error generating response:', error);
+            this.hideTypingIndicator();
 
-        // Generate response
-        const response = await this.generateResponse(message);
-        
-        this.hideTypingIndicator();
-        await this.addMessageWithTyping(response, 'assistant');
+            // Fallback to local response generation
+            const fallbackResponse = await this.generateResponse(message);
+            await this.addMessageWithTyping(fallbackResponse, 'assistant');
+        }
 
         // Update suggestions based on conversation
         await this.updateSuggestions();
+    }
+
+    async storeQuestion(question) {
+        if (!this.supabaseClient) {
+            console.warn('Supabase not configured, skipping question storage');
+            return;
+        }
+
+        try {
+            const { data, error } = await this.supabaseClient
+                .from('questions')
+                .insert([
+                    { text: question }
+                ]);
+
+            if (error) {
+                console.error('Error storing question:', error);
+            }
+        } catch (error) {
+            console.error('Failed to store question in Supabase:', error);
+        }
+    }
+
+    async generateResponseWithPerplexity(question) {
+        if (!this.PERPLEXITY_API_KEY) {
+            throw new Error('Perplexity API key not configured');
+        }
+
+        const response = await fetch(this.PERPLEXITY_API_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.PERPLEXITY_API_KEY}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                model: 'llama-3.1-sonar-small-128k-online',
+                messages: [
+                    {
+                        role: 'system',
+                        content: `You are an AI assistant helping people learn about Suhas Thakral's professional background. Here is his CV information:
+
+${this.resumeContent}
+
+Answer questions about Suhas's experience, skills, education, achievements, and background based on this information. If the question cannot be answered from the CV, politely explain what information is available. Keep responses conversational and informative.`
+                    },
+                    {
+                        role: 'user',
+                        content: question
+                    }
+                ],
+                max_tokens: 500,
+                temperature: 0.7,
+                top_p: 0.9,
+                stream: false
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Perplexity API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.choices[0].message.content;
     }
 
     addMessageToDOM(content, type, timestamp = null, animate = true) {
@@ -299,12 +380,9 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
         const messageTime = timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         messageDiv.innerHTML = `
-            <div class="message-avatar">
-                <span>${type === 'user' ? 'You' : 'AI'}</span>
-            </div>
             <div class="message-content">
-                <p>${content}</p>
-                <div class="message-timestamp">${messageTime}</div>
+                <div class="message-text">${content}</div>
+                <div class="message-time">${messageTime}</div>
             </div>
         `;
 
@@ -324,12 +402,11 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         messageDiv.innerHTML = `
-            <div class="message-avatar">
-                <span>${type === 'user' ? 'You' : 'AI'}</span>
-            </div>
             <div class="message-content">
-                <p class="typewriter-text"></p>
-                <div class="message-timestamp">${timestamp}</div>
+                <div class="message-text">
+                    <span class="typewriter-text"></span>
+                </div>
+                <div class="message-time">${timestamp}</div>
             </div>
         `;
 
@@ -354,7 +431,7 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
             currentText += (i > 0 ? ' ' : '') + words[i];
             element.textContent = currentText;
             this.scrollToBottom();
-            
+
             // Variable speed - faster for common words
             const delay = words[i].length < 4 ? 50 : 100;
             await this.delay(delay + Math.random() * 50);
@@ -369,12 +446,8 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
         typingDiv.id = 'typingIndicator';
 
         typingDiv.innerHTML = `
-            <div class="message-avatar">
-                <span>AI</span>
-            </div>
             <div class="message-content">
-                <div class="typing-indicator">
-                    <span>AI is thinking</span>
+                <div class="message-text">
                     <div class="typing-dots">
                         <span></span>
                         <span></span>
@@ -397,11 +470,14 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
     }
 
     async generateResponse(question) {
+        // Simulate API delay for realistic feel
+        await this.delay(1000 + Math.random() * 2000);
+
         const lowerQuestion = question.toLowerCase();
-        
+
         // Check if the question can be answered from the CV
         const response = this.searchResumeContent(lowerQuestion);
-        
+
         if (response) {
             return response;
         } else {
@@ -411,64 +487,65 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
 
     searchResumeContent(question) {
         const content = this.resumeContent.toLowerCase();
-        
+
         // Experience-related queries
         if (question.includes('experience') || question.includes('work') || question.includes('job') || question.includes('company')) {
             if (question.includes('current') || question.includes('latest') || question.includes('recent')) {
-                return "Suhas is currently working as a Senior Data Analyst on a freelance basis since April 2024. In this role, he's developed comprehensive BI solutions for multiple clients, resulting in 20% average improvement in decision-making speed, and created automated reporting systems that reduced manual reporting time by 30 hours/week.";
+                return "Suhas is currently working as Head of Business Intelligence at HYGH AG since April 2022. In this role, he's built attribution models for revenue tracking, optimized costs reducing OPEX by 10%, negotiated revenue increases of 11%, and led AI automation initiatives including TEXT to SQL solutions for Salesforce data. He's also assisted in developing quoting tools that save the sales team ~30 minutes per offer.";
             }
-            return "Suhas has extensive experience in data analytics and business intelligence. His recent roles include Senior Data Analyst (Freelance, 2024-Present), Business Intelligence Manager at OnTruck (2022-2024), Senior Business Analyst at Westwing Group (2021-2022), BI Analyst at Home24 SE (2019-2020), and Data Analyst at Rocket Internet SE (2018-2019).";
+            return "Suhas has extensive experience in data analytics and business intelligence. His career includes Head of Business Intelligence at HYGH AG (2022-Present), Business Intelligence Team Lead at Atheneum (2020-2022), Business Intelligence Controller at Atheneum (2019-2020), CRM Manager at SMUNCH (2018-2019), Business Intelligence Analyst at Medigo GmbH (2017-2018), and Consultant at Aon (2014-2015).";
         }
 
         // Skills-related queries
         if (question.includes('skill') || question.includes('technology') || question.includes('tool') || question.includes('programming')) {
-            if (question.includes('python') || question.includes('sql')) {
-                return "Suhas has expert-level SQL skills and advanced Python skills. He's also proficient in R (intermediate level) and has basic JavaScript knowledge. His programming experience is complemented by extensive work with databases like BigQuery, PostgreSQL, MySQL, Snowflake, and Redshift.";
-            }
             if (question.includes('ai') || question.includes('machine learning') || question.includes('ml')) {
-                return "Suhas has strong AI and ML knowledge including ChatGPT, OpenAI API, LM Studio, MCP, RAG, Vibe Coding, Prompt Engineering, and n8n Agents. He's even built an AI-powered CV chatbot using RAG and local LLMs as a personal project!";
+                return "Suhas has strong AI and ML expertise including AI concepts, Prompt engineering, Large Language Models, 'Vibe coding' techniques, Automated insights, RAG (Retrieval Augmented Generation), AI Chatbot with vector search, and Vector databases. He's actively driving AI adoption and integrating LLMs into BI workflows for automated insights and human-centered data interactions.";
             }
-            return "Suhas has a comprehensive technical skill set including: Programming (SQL-Expert, Python-Advanced, R-Intermediate), BI Tools (Tableau, Looker Studio, QlikSense, Metabase, Power BI), Cloud Platforms (GCP, AWS, Azure), ETL/ELT tools (Fivetran, Stitch, DBT, Airflow), and AI/ML technologies (OpenAI API, LM Studio, RAG, Prompt Engineering).";
+            if (question.includes('salesforce') || question.includes('crm')) {
+                return "Suhas has extensive Salesforce expertise - he serves as a Salesforce Admin and product owner at HYGH AG, custom building apps on Salesforce to bring all systems under one ecosystem. He's also worked with Hubspot, Pipedrive, and has experience with CRM data migration and cleaning, sales process optimization using MarketingCloud automation.";
+            }
+            return "Suhas has comprehensive technical skills across AI & Advanced Analytics (LLMs, RAG, Vector search, Prompt engineering), Data Technologies (BigQuery, AWS, SQL, Python, ETL tools like Fivetran, Stitch Data, DBT, Airflow), Visualization & BI (Tableau, Looker Studio, QlikSense, Metabase), and CRM & Platforms (Salesforce, Hubspot, Pipedrive, Cloud Functions, Cloud Scheduler, ZeroETL).";
         }
 
         // Education queries
-        if (question.includes('education') || question.includes('degree') || question.includes('university') || question.includes('study')) {
-            return "Suhas has a Master of Science in Management from WHU – Otto Beisheim School of Management (2016-2018) with a focus on Strategy, Analytics, and Digital Transformation. His thesis was on 'Predictive Analytics in E-commerce: Customer Lifetime Value Optimization'. He also has a Bachelor of Engineering in Computer Science from Delhi College of Engineering (2010-2014).";
+        if (question.includes('education') || question.includes('degree') || question.includes('university') || question.includes('study') || question.includes('whu')) {
+            return "Suhas has a strong educational background with a Master in Management from WHU – Otto Beisheim School of Management (2015-2017), a Master's degree in Business, Management, Marketing from University of South Carolina Darla Moore School of Business (2016), and a Bachelor of Arts in Economics from Delhi University Hansraj College (2011-2014).";
         }
 
         // Achievements queries
-        if (question.includes('achievement') || question.includes('accomplish') || question.includes('success') || question.includes('impact')) {
-            return "Suhas has impressive achievements including: increased revenue by 15% and 21% for two different companies through advanced analytics, reduced BI infrastructure costs by 35% while improving performance, managed cross-functional teams of 8+ members, automated 80% of reporting processes (saving 25 hours/week), and improved data accuracy from 75% to 95% through comprehensive data governance initiatives.";
+        if (question.includes('achievement') || question.includes('accomplish') || question.includes('success') || question.includes('impact') || question.includes('business impact')) {
+            return "Suhas has impressive business impact achievements: built attribution models for cleaner investor reporting, reduced OPEX by 10% through cost optimization analysis, increased revenue potential by 11% through CMP negotiations, expanded a data team from 1 to 8 people across Berlin, London, and Lahore, increased gross revenue by 50% through compensation modeling at Atheneum, and implemented AI automation for TEXT to SQL processes. He's also saved sales teams significant time through automated offer building tools.";
+        }
+
+        // Leadership/Management queries
+        if (question.includes('leadership') || question.includes('team') || question.includes('manage') || question.includes('mentor')) {
+            return "Suhas has strong leadership experience, particularly at Atheneum where he expanded the data team from 1 person to 8 across Berlin, London, and Lahore. At HYGH AG, he collaborates with senior leadership to define BI department strategy, trains new hires and mentors the team to improve data skills on Tableau and SQL. He's skilled in managing cross-functional projects and aligning financial goals with BI for direct measurable impact.";
         }
 
         // Location/Contact queries
-        if (question.includes('location') || question.includes('where') || question.includes('based') || question.includes('contact')) {
-            return "Suhas is based in Germany. You can reach him at suhas.thakral@whu.edu or +49 15223957027. His LinkedIn profile is linkedin.com/in/suhas-thakral-6974a479.";
+        if (question.includes('location') || question.includes('where') || question.includes('based') || question.includes('contact') || question.includes('email')) {
+            return "You can contact Suhas at suhas.thakral@whu.edu. Based on his experience with companies across different regions and his educational background, he has worked internationally.";
         }
 
-        // Language queries
-        if (question.includes('language') || question.includes('speak')) {
-            return "Suhas speaks English fluently, German at a conversational level, and Hindi as his native language.";
+        // AI/Automation specific queries
+        if (question.includes('automation') || question.includes('text to sql') || question.includes('ai innovation')) {
+            return "Suhas has built AI automation for TEXT to SQL on N*N for simple Salesforce data at HYGH AG. He's driving AI adoption and prompt engineering by integrating AI into BI workflows, leveraging large language models for automated insights and human-centered data interactions. His expertise includes RAG systems, AI chatbots with vector search, and various 'vibe coding' techniques.";
         }
 
-        // Certification queries
-        if (question.includes('certification') || question.includes('certified')) {
-            return "Suhas holds several professional certifications: Google Cloud Professional Data Engineer (2023), Tableau Desktop Certified Professional (2022), AWS Certified Solutions Architect (2021), Salesforce Advanced Administrator (2020), and Advanced SQL and Python for Data Analysis from Coursera (2019).";
+        // BI Tools specific queries
+        if (question.includes('tableau') || question.includes('looker') || question.includes('qlik') || question.includes('metabase') || question.includes('dashboard')) {
+            return "Suhas is highly skilled in BI and visualization tools including Tableau, Looker Studio, QlikSense, and Metabase. At his various roles, he's created comprehensive dashboards to visualize data in the most understandable ways, designed reporting frameworks for clients and stakeholders, managed master reporting projects to make data accessible, and trained team members on Tableau and SQL skills.";
         }
 
-        // Projects/Interests queries
-        if (question.includes('project') || question.includes('interest') || question.includes('hobby')) {
-            return "Suhas has worked on several interesting projects including building an AI-powered CV chatbot using RAG and local LLMs, developing a browser extension for automated e-commerce size filtering, and creating AI agents for business data analysis using QWEN 3 and LM Studio. His interests include running (6 min/km pace), coffee brewing, and AI/ML experimentation.";
-        }
-
-        // Leadership queries
-        if (question.includes('leadership') || question.includes('manage') || question.includes('team')) {
-            return "Suhas has strong leadership experience, having managed cross-functional teams of 8+ members across multiple departments. At OnTruck, he led a team of 4 analysts in developing data-driven solutions for logistics optimization. His management approach focuses on collaboration and generating business impact through insights.";
-        }
-
-        // Industry queries
-        if (question.includes('industry') || question.includes('domain') || question.includes('sector')) {
-            return "Suhas has worked across various industries including e-commerce (Westwing Group, Home24 SE), logistics (OnTruck), and venture capital/startups (Rocket Internet SE). His experience spans retail, logistics optimization, and portfolio company analytics, giving him a broad understanding of different business models and data challenges.";
+        // Company-specific queries
+        if (question.includes('hygh') || question.includes('atheneum') || question.includes('smunch') || question.includes('medigo') || question.includes('aon')) {
+            if (question.includes('hygh')) {
+                return "At HYGH AG (April 2022-Present), Suhas serves as Head of Business Intelligence. His key achievements include building attribution models for revenue tracking, reducing OPEX by 10%, increasing revenue potential by 11%, implementing AI automation for TEXT to SQL, and developing automated offer building tools that save sales teams ~30 minutes per offer.";
+            }
+            if (question.includes('atheneum')) {
+                return "At Atheneum, Suhas worked as Business Intelligence Team Lead (Jan 2020 - Apr 2022) and Business Intelligence Controller (Jun 2019 - Jan 2020). His major achievements include building compensation models that increased gross revenue by 50%, expanding the data team from 1 to 8 people across Berlin, London, and Lahore, and working with upper management to align financial goals with BI.";
+            }
+            return "Suhas has worked at several notable companies: HYGH AG (current, Head of BI), Atheneum (BI Team Lead), SMUNCH (CRM Manager), Medigo GmbH (BI Analyst), and Aon (Consultant). Each role involved significant data analytics, business intelligence, and process optimization work.";
         }
 
         return null;
@@ -497,7 +574,7 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
         const hasAskedAboutExperience = recentQuestions.some(q => 
             q.toLowerCase().includes('experience') || q.toLowerCase().includes('work') || q.toLowerCase().includes('job')
         );
-        
+
         const hasAskedAboutSkills = recentQuestions.some(q => 
             q.toLowerCase().includes('skill') || q.toLowerCase().includes('technology') || q.toLowerCase().includes('programming')
         );
@@ -506,33 +583,41 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
             q.toLowerCase().includes('education') || q.toLowerCase().includes('degree') || q.toLowerCase().includes('university')
         );
 
+        const hasAskedAboutAI = recentQuestions.some(q => 
+            q.toLowerCase().includes('ai') || q.toLowerCase().includes('automation') || q.toLowerCase().includes('machine learning')
+        );
+
         // Generate contextual suggestions
         if (!hasAskedAboutExperience) {
-            suggestions.push("What companies has he worked for and what were his roles?");
+            suggestions.push("What is Suhas's current role at HYGH AG?");
         } else {
-            suggestions.push("Tell me more about his leadership and team management experience");
+            suggestions.push("Tell me about his team leadership experience at Atheneum");
         }
 
         if (!hasAskedAboutSkills) {
-            suggestions.push("What are his core technical competencies and tools?");
+            suggestions.push("What are his core BI and data visualization skills?");
+        } else if (!hasAskedAboutAI) {
+            suggestions.push("What AI and automation projects has he worked on?");
         } else {
-            suggestions.push("What AI and machine learning technologies does he work with?");
+            suggestions.push("What Salesforce and CRM expertise does he have?");
         }
 
         if (!hasAskedAboutEducation) {
-            suggestions.push("What is his educational background and qualifications?");
+            suggestions.push("What's his educational background from WHU?");
         } else {
-            suggestions.push("What certifications and training has he completed?");
+            suggestions.push("What business impact has he achieved in his roles?");
         }
 
         // Fill remaining slots with relevant questions
         const additionalSuggestions = [
-            "What are his key professional achievements and impact?",
-            "What personal projects and interests does he have?",
-            "What industries has he worked in?",
-            "What are his language skills?",
+            "How did he grow the data team from 1 to 8 people?",
+            "What cost optimization results has he achieved?",
+            "Which BI tools does he specialize in?",
+            "What AI chatbot and RAG experience does he have?",
+            "Tell me about his TEXT to SQL automation work",
+            "What revenue growth has he delivered?",
             "How can I contact Suhas?",
-            "What are his data visualization and BI tool skills?"
+            "What companies has he worked for?"
         ];
 
         // Add additional suggestions if we need more
@@ -571,7 +656,7 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
 
     async verifyEmail() {
         const email = document.getElementById('emailInput').value.trim();
-        
+
         if (!email || !this.isValidEmail(email)) {
             alert('Please enter a valid email address.');
             return;
@@ -588,7 +673,7 @@ Bachelor of Arts (B.A.), Economics | Delhi University Hansraj College | 2011 - 2
 
         document.getElementById('verificationStatus').classList.remove('hidden');
         document.getElementById('verifyButton').textContent = 'Verified!';
-        
+
         this.updateUI();
         this.saveToStorage();
 
